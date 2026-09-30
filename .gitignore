@@ -1,0 +1,22 @@
+# Credenciales: nunca se suben al repositorio
+secretos.h
+**/secretos.h
+
+# Node-RED: archivo de credenciales de los flujos
+flows_cred.json
+.config.*.json
+
+# Mosquitto: archivo de usuarios y claves
+passwd
+*.passwd
+
+# Registro historico local (se genera al ejecutar)
+*.db
+*.sqlite
+
+# Archivos de sistema y editores
+.vscode/
+build/
+Thumbs.db
+desktop.ini
+.DS_Store
