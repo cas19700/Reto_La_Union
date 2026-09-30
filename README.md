@@ -4,6 +4,7 @@ Prototipo de dos nodos IoT con ESP32 que se comunican entre sí por ESP-NOW y co
 
 El azúcar absorbe humedad y se apelmaza. Por eso el sistema vigila la temperatura y la humedad de una bodega y actúa sobre la ventilación.
 
+![Diagrama general](docs/diag_proyecto_iot.png)
 
 ## Nodos
 
@@ -33,3 +34,6 @@ docs/       decisiones técnicas y diagramas
 
 Compatible con los cores del ESP32 2.x y 3.x (verificado con 2.0.9 y 3.3.0).
 
+## Documentación
+
+Las decisiones técnicas y su justificación están en [docs/decisiones_reto_iot.md](docs/decisiones_reto_iot.md).
