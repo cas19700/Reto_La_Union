@@ -186,6 +186,7 @@ void leerSensor() {
     fallosSensor = 0;
     sensorOk = true;
     ultimaTemp = t;
+    Serial.printf("Temperatura: %.1f C (lectura en %lu ms)\n", t, (unsigned long)duracion);
   }
   evaluarAlarma();
 }
