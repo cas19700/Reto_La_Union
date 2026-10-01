@@ -8,7 +8,7 @@ El azúcar absorbe humedad y se apelmaza. Por eso el sistema vigila la temperatu
 
 ## Nodos
 
-**Nodo A (panel de supervisión).** ESP32 con DHT22 para temperatura y un LED de alarma. El LED apagado indica operación normal. Parpadeo rápido indica alarma y parpadeo lento indica falla de un sensor o del enlace.
+**Nodo A (panel de supervisión).** ESP32 con DHT22 para temperatura y un LED de alarma. El LED apagado indica operación normal. Parpadeo rápido indica alarma y parpadeo lento indica falla de un sensor o del enlace. El LED y el heartbeat hacia B se manejan con un temporizador (esp_timer) y no dependen del loop. Así siguen funcionando aunque la conexión con el broker tarde en responder.
 
 **Nodo B (zona de bodega).** ESP32 con DHT22 para humedad y un extractor de 5 V controlado por PWM. En desarrollo.
 
@@ -32,7 +32,7 @@ docs/       decisiones técnicas y diagramas
 3. En Arduino IDE selecciona la placa "ESP32 Dev Module".
 4. Instala las librerías PubSubClient, DHT sensor library de Adafruit con Adafruit Unified Sensor y ArduinoJson 7.
 
-Compatible con los cores del ESP32 2.x y 3.x (verificado con 2.0.9 y 3.3.0).
+Compatible con los cores del ESP32 2.x y 3.x (verificado con 2.0.9 y 3.3.12).
 
 ## Documentación
 
