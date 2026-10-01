@@ -26,6 +26,18 @@ La placa del Nodo A tiene un chip ESP32-D0WDQ6 revisión v1.0 según esptool. Es
 
 Estado del montaje del Nodo A: LED y DHT22 conectados y probados en la protoboard. La MAC de la placa del Nodo A ya está en protocolo.h.
 
+La placa del Nodo B tiene un chip ESP32-D0WD-V3 revisión v3.1. Es de otra generación que la del Nodo A. Ambas ejecutan el mismo código y ESP-NOW funciona igual entre revisiones. Su MAC ya está en protocolo.h. Mientras tenga cargado el firmware del Nodo A no deben estar encendidas las dos placas a la vez porque usarían el mismo identificador MQTT y el broker las desconectaría una a la otra.
+
+**Pines del Nodo B.** Extractor en GPIO 25. En la protoboard del Nodo B el ESP32 tapa todos los agujeros libres de la fila de pines de 3V3 (la de D4 y D18) así que solo es accesible la fila de VIN. GPIO 25 está en esa fila junto a VIN y GND. No es pin de arranque, no emite señales al encender y acepta PWM. Se descartaron los otros pines de esa fila: 34, 35, 36 y 39 son solo de entrada, 12 es un pin de arranque que impide arrancar si está en alto y 14 emite una señal al encender que haría dar un tirón al ventilador. Pendiente: el DHT22 del Nodo B necesita el pin 3V3 que está en la fila tapada. Opciones: colocar el ESP32 en la protoboard igual que en el Nodo A, usar dos protoboards juntas o usar jumpers hembra-macho.
+
+**Circuito del extractor.** El ventilador recibe 5 V de VIN por su cable rojo. Su cable negro va al colector del 2N2222A y el emisor va a GND (interruptor del lado de tierra). Base con 220 ohm desde GPIO 25 (unos 11.4 mA con 0.8 V de caída base-emisor) y 10 kohm a GND. Diodo 1N5822 en paralelo con el ventilador con la banda hacia 5 V. Capacitores de 100 uF (pata larga a 5 V) y 100 nF entre 5 V y GND cerca del ventilador. Antes de energizar se verifica el orden de patas del transistor porque las versiones PN2222A (E-B-C) y P2N2222A (C-B-E) en TO-92 lo tienen invertido. El 1N5822 tiene patas de 1.3 mm que no entran bien en la protoboard: se le sueldan cables delgados o se usa un 1N5819.
+
+**Prueba del extractor (30 de septiembre).** Con PWM a 25 kHz el ventilador solo giraba al 100 %. Por debajo arrancaba y se detenía a los pocos segundos. Causa: es un ventilador de dos cables con un controlador interno y un sensor Hall alimentados por los mismos cables del motor. Cada corte del PWM deja sin energía al controlador y su protección contra bloqueo detiene el motor. Los ventiladores de cuatro cables tienen una entrada de PWM separada a 25 kHz justamente por eso. Con PWM de baja frecuencia cada pulso de encendido dura varios milisegundos y el controlador funciona. Resultados: gira estable a 20, 50 y 100 Hz. Mínimo estable 30 %. Por debajo le cuesta y la velocidad es irregular. Arranca solo desde parado al 30 % sin impulso. El transistor sigue frío tras más de un minuto al 100 % (está saturado). Al levantar el ventilador con la mano a veces se traba. En la mesa gira constante.
+
+**Valores elegidos para el firmware del Nodo B.** PWM a 100 Hz (la frecuencia más alta probada que funciona). Mínimo útil de 40 %: cualquier valor de 1 a 39 % se lleva a 40 % y 0 % es apagado. Los 10 puntos de margen cubren la caída de voltaje de VIN cuando el WiFi consume picos de corriente. Impulso de arranque al 100 % durante 500 ms al pasar de apagado a encendido. No hace falta en el banco de pruebas pero protege el arranque con voltaje más bajo o con polvo en el ventilador.
+
+Pendiente: anotar la corriente de la etiqueta del ventilador.
+
 ## Arquitectura
 
 **Entre nodos: ESP-NOW.** Enlace directo sin router ni broker para cumplir la restricción 3 sin ambigüedad. Unicast por dirección MAC con cifrado (claves PMK y LMK de 16 caracteres guardadas en secretos.h). Cada nodo envía un heartbeat con su estado cada 1 s y de inmediato cuando cambia su alarma o el estado de su sensor. Si no llega nada en 3.5 s el enlace se declara caído.
@@ -147,7 +159,9 @@ Comportamiento seguro: con el nodo en manual se detuvo el broker. El LED siguió
 
 Con esto el Nodo A cumple en hardware real las restricciones 4 a 7 en lo que le corresponde por sí solo. La restricción 3 necesita al Nodo B.
 
-Pendiente: reservar la IP de la laptop en el router. Leer la MAC de la placa del Nodo B y copiarla en protocolo.h. Probar el circuito del ventilador con un sketch mínimo de PWM. Definir el estado seguro y las variables remotas del Nodo B y escribir su firmware. Documento formal del protocolo. Plataforma Node-RED. Opcionales y preparación de la presentación.
+**Pruebas del Nodo B (30 de septiembre).** Se leyó la MAC de su placa y se probó el extractor con un sketch mínimo de PWM. Los resultados están en la sección de Hardware.
+
+Pendiente: reservar la IP de la laptop en el router. Resolver el acceso a la fila de 3V3 del ESP32 del Nodo B para conectar su DHT22. Revisar los contactos del ventilador en la protoboard. Definir el estado seguro y las variables remotas del Nodo B y escribir su firmware. Documento formal del protocolo. Plataforma Node-RED. Opcionales y preparación de la presentación.
 
 ## Cronograma
 
