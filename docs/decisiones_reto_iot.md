@@ -34,7 +34,7 @@ La placa del Nodo B tiene un chip ESP32-D0WD-V3 revisión v3.1. Es de otra gener
 
 **Prueba del extractor (30 de septiembre).** Con PWM a 25 kHz el ventilador solo giraba al 100 %. Por debajo arrancaba y se detenía a los pocos segundos. Causa: es un ventilador de dos cables con un controlador interno y un sensor Hall alimentados por los mismos cables del motor. Cada corte del PWM deja sin energía al controlador y su protección contra bloqueo detiene el motor. Los ventiladores de cuatro cables tienen una entrada de PWM separada a 25 kHz justamente por eso. Con PWM de baja frecuencia cada pulso de encendido dura varios milisegundos y el controlador funciona. Resultados: gira estable a 20, 50 y 100 Hz. Mínimo estable 30 %. Por debajo le cuesta y la velocidad es irregular. Arranca solo desde parado al 30 % sin impulso. El transistor sigue frío tras más de un minuto al 100 % (está saturado). Al levantar el ventilador con la mano a veces se traba. En la mesa gira constante.
 
-**Valores elegidos para el firmware del Nodo B.** PWM a 100 Hz (la frecuencia más alta probada que funciona). Mínimo útil de 40 %: cualquier valor de 1 a 39 % se lleva a 40 % y 0 % es apagado. Los 10 puntos de margen cubren la caída de voltaje de VIN cuando el WiFi consume picos de corriente. Impulso de arranque al 100 % durante 500 ms al pasar de apagado a encendido. No hace falta en el banco de pruebas pero protege el arranque con voltaje más bajo o con polvo en el ventilador.
+**Valores elegidos para el firmware del Nodo B.** PWM a 100 Hz (la frecuencia más alta probada que funciona). Mínimo útil de 40 %: el extractor solo puede estar apagado (0 %) o entre 40 y 100 %. La lógica automática nunca pide menos de 40 % y un comando remoto con un valor de 1 a 39 % se rechaza con error. Los 10 puntos de margen cubren la caída de voltaje de VIN cuando el WiFi consume picos de corriente. Impulso de arranque al 100 % durante 500 ms al pasar de apagado a encendido. No hace falta en el banco de pruebas pero protege el arranque con voltaje más bajo o con polvo en el ventilador.
 
 Pendiente: anotar la corriente de la etiqueta del ventilador.
 
@@ -61,6 +61,11 @@ Todo comando lleva un `id`. El nodo responde en su tópico ack con `{"id":"c42",
 Comandos del Nodo A:
 `led` con valor on, off o blink (pasa a modo manual). `modo` con valor auto o manual. `set` con umbralTemp (-40 a 80), histeresis (0 a 10) e intervaloMs (2000 a 60000); se valida todo antes de aplicar y si algo es inválido se rechaza el comando completo. `reporte` solo publica el estado.
 
+Comandos del Nodo B (mismo formato y misma validación que A, tópicos `nodoB/...` y el común `todos/cmd`):
+`extractor` con valor 0 o de 40 a 100 (pasa a modo manual). Un valor de 1 a 39 se rechaza porque el ventilador no gira de forma confiable por debajo del mínimo: el nodo no acepta una orden que su hardware no puede cumplir. `modo` con valor auto o manual. `set` con umbralHum (20 a 95), histeresisHum (0 a 20) e intervaloMs (2000 a 60000). `reporte` solo publica el estado.
+
+El estado del Nodo B incluye un campo `motivo` que explica por qué gira el extractor: humedad, temperaturaA, preventivo, normal o manual.
+
 Las variables de operación se guardan en flash con la librería Preferences.
 
 ## Broker Mosquitto
@@ -77,6 +82,8 @@ Mosquitto 2.1.2 instalado en la laptop como servicio de Windows. Arranca solo al
 
 **Mensajes retenidos y persistencia.** La persistencia de Mosquitto no está activada. Al reiniciar el servicio se pierden los mensajes retenidos hasta que cada nodo se reconecta y vuelve a publicar su conexión y su estado. Se puede activar con `persistence true` y una ruta de almacenamiento. Se decide al armar Node-RED.
 
+**Ids únicos.** Node-RED debe generar un id distinto para cada comando (por ejemplo con la hora en milisegundos y un contador). Un id repetido se trata como reintento y no se ejecuta.
+
 **Caída del broker.** El Last Will lo publica el broker cuando desaparece un cliente. Si el que cae es el broker nadie publica "offline". Por eso Node-RED debe mostrar su propio indicador de conexión con el broker y no depender solo de los tópicos de conexión de los nodos.
 
 **Problema encontrado y solución.** El servicio arrancaba y se detenía de inmediato sin mostrar error. A mano con `mosquitto -c mosquitto.conf -v` funcionaba bien. El registro del servicio mostró la causa: `Unable to open pwfile "C:\mosquitto\passwd"`. Esta versión de Mosquitto crea sus archivos con permisos solo para la cuenta que los crea. El passwd lo creó el usuario de Windows y el servicio corre como LocalSystem así que no podía leerlo. Se resolvió dando permiso de solo lectura a LocalSystem con `icacls C:\mosquitto\passwd /grant *S-1-5-18:R`. S-1-5-18 es el identificador fijo de LocalSystem y funciona en Windows de cualquier idioma. Cada vez que se use mosquitto_passwd hay que repetir ese comando porque la herramienta puede reescribir el archivo con los permisos restringidos. El registro tiene la misma restricción en sentido inverso: para leerlo hay que tomar posesión con takeown y darse permiso de lectura con icacls.
@@ -90,6 +97,21 @@ La alarma de temperatura usa histéresis. El sensor se declara en falla tras tre
 El LED y el heartbeat los ejecuta el temporizador de salidas. Cualquier cambio de la alarma o del estado del sensor de A (por una lectura o por un comando set que cambia el umbral) dispara un heartbeat inmediato hacia B en menos de 50 ms.
 
 **Comportamiento seguro:** si se pierde el enlace con B se descarta su última alarma y se muestra falla. Si el nodo está en manual y pierde la plataforma por 30 s regresa solo a automático. Watchdog del loop activado con enableLoopWDT (reinicia si el loop se traba unos 5 s).
+
+## Comportamiento del Nodo B
+
+**Regla general.** El Nodo B copia el diseño del Nodo A siempre que se puede. Reutiliza el código probado de MQTT, comandos, validación, Preferences, ESP-NOW, temporizador de salidas y modo seguro. Las únicas diferencias son las que impone su hardware. Así el diseño se explica una vez y se aplica en los dos nodos.
+
+**Velocidad del extractor en modo automático** (misma idea que el LED de A: alarma antes que falla y falla antes que normal):
+100 % si la humedad de B está en alarma. 60 % si A reporta temperatura alta con el enlace activo y su sensor funcionando. 40 % preventivo si no hay información confiable (sensor de B fallando, sensor de A fallando o enlace con A caído). 0 % si todo está normal. Las velocidades de 60 y 100 % son constantes en el código para no agrandar el alcance.
+
+**Alarma de humedad.** Con histéresis igual que la de temperatura. Valores iniciales: umbralHum 70 % HR y histeresisHum 5 puntos. No se usa un valor normado para bodegas de azúcar: 70 % se eligió para que la demo funcione con la humedad normal de un cuarto en Guatemala y para poder activar la alarma echando el aliento sobre el sensor. Es configurable y el valor real lo definiría el equipo de calidad de la bodega.
+
+**Comportamiento seguro.** Si se pierde el enlace con A se descarta su última alarma de temperatura (no se confía en un dato viejo) y el extractor pasa al 40 % preventivo porque sin el panel B no sabe si la temperatura está alta. Ventilar al mínimo cuesta poco y es la opción conservadora. El control de humedad sigue funcionando porque su sensor es local. Si falla el sensor de B también pasa al 40 % preventivo y reporta sensorOk falso para que A muestre la falla. Si se pierde la plataforma en modo manual vuelve a automático a los 30 s como A. En la demo el comportamiento seguro se ve: al desconectar A el extractor de B pasa al 40 % en unos 3.5 s.
+
+**Temporizador de salidas.** El mismo patrón que A: el loop decide y el temporizador de 50 ms ejecuta. Aplica la velocidad del extractor con el impulso de arranque contado en ticks (10 ticks de 50 ms) y envía el heartbeat a A con la humedad, su alarma, el estado del sensor y el porcentaje del extractor. Solo escribe el PWM cuando cambia el valor.
+
+**DHT22 del Nodo B.** Real y no simulado aunque el enunciado lo permitiría. Echarle el aliento y ver cómo se enciende el extractor en B y parpadea el LED en A es la mejor prueba visible de la interacción entre nodos. La humedad simulada queda solo como respaldo si falla algo el último día. Va en GPIO 4 como en A: requiere resolver el acceso a la fila de 3V3 con dos protoboards juntas.
 
 ## Limitaciones conocidas (declararlas en la presentación)
 
@@ -111,7 +133,9 @@ Una lectura fallida del DHT22 tarda unos 73 ms (medido sin sensor conectado) por
 
 ## Elementos opcionales elegidos
 
-Cifrado de ESP-NOW y autenticación en el broker con validación de rangos (ya implementados en A). Reconexión automática (implementada). Registro histórico de lecturas y comandos en Node-RED con SQLite o CSV. Alarmas fuera de rango. Actualización OTA con ArduinoOTA.
+Cifrado de ESP-NOW y autenticación en el broker con validación de rangos (implementados en ambos nodos). Reconexión automática (implementada). Registro histórico de lecturas y comandos en Node-RED con SQLite o CSV. Alarmas fuera de rango (ya existen en los nodos y solo falta mostrarlas en el dashboard). Actualización OTA con ArduinoOTA.
+
+Prioridad por valor contra riesgo: primero el registro histórico en CSV (barato y vistoso) y la visualización de alarmas. La actualización OTA es la de menor prioridad porque agrega riesgo (credenciales, particiones, una placa sin firmware válido) y es la que menos aporta a lo que evalúa el enunciado. Si el 4 de octubre llega apretado se saca del alcance y se declara como trabajo futuro.
 
 ## Credenciales y repositorio
 
@@ -161,8 +185,36 @@ Con esto el Nodo A cumple en hardware real las restricciones 4 a 7 en lo que le 
 
 **Pruebas del Nodo B (30 de septiembre).** Se leyó la MAC de su placa y se probó el extractor con un sketch mínimo de PWM. Los resultados están en la sección de Hardware.
 
-Pendiente: reservar la IP de la laptop en el router. Resolver el acceso a la fila de 3V3 del ESP32 del Nodo B para conectar su DHT22. Revisar los contactos del ventilador en la protoboard. Definir el estado seguro y las variables remotas del Nodo B y escribir su firmware. Documento formal del protocolo. Plataforma Node-RED. Opcionales y preparación de la presentación.
+**Nodo B versión 1.** Firmware escrito con las decisiones de la sección Comportamiento del Nodo B. Compilado sin advertencias con los cores 2.0.9 y 3.3.12.
+
+**Prueba de los dos nodos juntos (1 de octubre, sin el DHT22 de B).** Observada con mosquitto_sub.
+
+Enlace: ambos estados mostraron enlaceA y enlaceB verdaderos y perdidosA y perdidosB en 0 durante toda la prueba. B en 40 % preventivo por su sensor ausente y el LED de A en parpadeo lento por la falla del sensor de B recibida por ESP-NOW.
+
+Interacción sin plataforma (restricción 3): con set umbralTemp 25 enviado solo a A el extractor de B pasó de 40 a 60 % con motivo temperaturaA. El estado de B llegó al broker antes que el estado de A que generó el comando. Explicación probable: A publica el ack y el estado seguidos y el segundo mensaje TCP espera el acuse del primero (algoritmo de Nagle) mientras el aviso por ESP-NOW ya llegó a B. Muestra que el enlace directo es más rápido que el camino por la plataforma.
+
+Pérdida del enlace (restricción 7): al desconectar A el extractor de B pasó a 40 % preventivo con enlaceA falso y después llegó nodoA/conexion offline. El orden es el esperado: el timeout de ESP-NOW (3.5 s) es menor que el de MQTT (7.5 s).
+
+Reconexión: al conectar A de nuevo B recuperó el enlace y volvió a 60 % antes de que llegara nodoA/conexion online. ESP-NOW arranca unos 2.5 s después de encender y MQTT a los 5 s. Confirma que el enlace entre nodos no depende de la plataforma. Tras un reinicio de A su secuencia vuelve a 0 y B lo tomó como nuevo inicio sin contar pérdidas falsas.
+
+Observaciones: en una de las reconexiones A se reinició dos veces seguidas (uptimeS 5 dos veces y offline seguido de online). Lo más probable es el contacto del USB al enchufarlo. Si se repite sin tocar el cable hay que revisar la causa del reinicio en el monitor serie. Además se reutilizó el id c10 para regresar el umbral a 30. Se ejecutó solo porque A se había reiniciado y había olvidado el último id. Sin ese reinicio el nodo lo habría tratado como duplicado y habría reenviado el ack del comando anterior sin aplicar el cambio. El estado real habría mostrado el umbral sin cambiar (restricción 6) pero la plataforma debe generar un id único por comando.
+
+**Comandos del Nodo B y desconexión de B (2 de octubre, sin el DHT22 de B).**
+
+Comando a ambos nodos (restricción 4): reporte y modo auto por todos/cmd produjeron dos acks con el mismo id, uno de cada nodo. El orden de los acks cambió entre una prueba y otra (primero A y luego B, después al revés). Con un comando simultáneo no hay orden garantizado: la plataforma debe esperar las dos confirmaciones del mismo id sin suponer cuál llega primero. Un modo auto enviado a un nodo que ya estaba en auto responde ok sin efectos secundarios.
+
+Extractor en manual: 80 % con modo y motivo manual estable en los estados siguientes. Apagado con 0 %. Encendido desde apagado al 50 %: el ventilador arranca con el impulso y desacelera hasta el 50 % sin detenerse (repetido tres veces). No hace falta alargar el impulso ni agregar una rampa. El estado reporta 50 % desde el primer momento aunque el PWM esté al 100 % durante los 500 ms del impulso: el estado informa la velocidad de operación y el impulso es la forma de llegar a ella.
+
+Rechazos: extractor 25 rechazado por rango, extractor "50" (texto) rechazado por tipo y umbralHum 100 rechazado por rango. En los tres el estado siguiente mostró el valor anterior sin cambios. La validación exige el tipo de dato del contrato y no convierte texto en número.
+
+Desconexión de B: al desconectar su USB A pasó a enlaceB falso unos 3.5 s después y luego llegó nodoB/conexion offline. Al reconectar A recuperó el enlace antes de que llegara nodoB/conexion online. perdidosB siguió en 0 tras el reinicio de B.
+
+Con esto quedan probados en hardware los dos sentidos del enlace ESP-NOW, la detección de pérdida en ambos nodos, todos los comandos de los dos nodos, los comandos simultáneos y el comportamiento seguro. Falta solo el DHT22 del Nodo B.
+
+Pendiente: fijar el canal de 2.4 GHz en 6 en el router (quedó en Auto). Reservar la IP de la laptop en el router. Resolver el acceso a la fila de 3V3 del ESP32 del Nodo B para conectar su DHT22. Revisar los contactos del ventilador en la protoboard. Documento formal del protocolo. Plataforma Node-RED. Opcionales y preparación de la presentación.
 
 ## Cronograma
 
 25 al 27 de septiembre: compra de hardware y pruebas de cada sensor y actuador por separado. 28 al 30: comunicación MQTT y ESP-NOW entre nodos. 1 y 2 de octubre: lógica cruzada, comandos y variables. 3: dashboard en Node-RED. 4: robustez y opcionales. 5: documentación y ensayo de la presentación. 6: entrega.
+
+Ajuste del 30 de septiembre según lo avanzado. 1 de octubre: Nodo B en la placa con el extractor y primera prueba de ESP-NOW entre nodos. 2: DHT22 del Nodo B, interacciones cruzadas completas y pruebas de todos los escenarios de falla. 3: dashboard en Node-RED. 4: opcionales por orden de prioridad. 5: documentación y ensayo. 6: entrega.
