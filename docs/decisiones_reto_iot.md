@@ -28,7 +28,7 @@ Estado del montaje del Nodo A: LED y DHT22 conectados y probados en la protoboar
 
 La placa del Nodo B tiene un chip ESP32-D0WD-V3 revisión v3.1. Es de otra generación que la del Nodo A. Ambas ejecutan el mismo código y ESP-NOW funciona igual entre revisiones. Su MAC ya está en protocolo.h. Mientras tenga cargado el firmware del Nodo A no deben estar encendidas las dos placas a la vez porque usarían el mismo identificador MQTT y el broker las desconectaría una a la otra.
 
-**Pines del Nodo B.** Extractor en GPIO 25. En la protoboard del Nodo B el ESP32 tapa todos los agujeros libres de la fila de pines de 3V3 (la de D4 y D18) así que solo es accesible la fila de VIN. GPIO 25 está en esa fila junto a VIN y GND. No es pin de arranque, no emite señales al encender y acepta PWM. Se descartaron los otros pines de esa fila: 34, 35, 36 y 39 son solo de entrada, 12 es un pin de arranque que impide arrancar si está en alto y 14 emite una señal al encender que haría dar un tirón al ventilador. Pendiente: el DHT22 del Nodo B necesita el pin 3V3 que está en la fila tapada. Opciones: colocar el ESP32 en la protoboard igual que en el Nodo A, usar dos protoboards juntas o usar jumpers hembra-macho.
+**Pines del Nodo B.** Extractor en GPIO 25. En la protoboard del Nodo B el ESP32 tapa todos los agujeros libres de la fila de pines de 3V3 (la de D4 y D18) así que solo es accesible la fila de VIN. GPIO 25 está en esa fila junto a VIN y GND. No es pin de arranque, no emite señales al encender y acepta PWM. Se descartaron los otros pines de esa fila: 34, 35, 36 y 39 son solo de entrada, 12 es un pin de arranque que impide arrancar si está en alto y 14 emite una señal al encender que haría dar un tirón al ventilador. El DHT22 del Nodo B usa el pin 3V3 de la fila tapada. Se resolvió colocando el ESP32 al borde de la protoboard con esa fila colgando y jumpers hembra-macho (detalle en Estado del trabajo).
 
 **Circuito del extractor.** El ventilador recibe 5 V de VIN por su cable rojo. Su cable negro va al colector del 2N2222A y el emisor va a GND (interruptor del lado de tierra). Base con 220 ohm desde GPIO 25 (unos 11.4 mA con 0.8 V de caída base-emisor) y 10 kohm a GND. Diodo 1N5822 en paralelo con el ventilador con la banda hacia 5 V. Capacitores de 100 uF (pata larga a 5 V) y 100 nF entre 5 V y GND cerca del ventilador. Antes de energizar se verifica el orden de patas del transistor porque las versiones PN2222A (E-B-C) y P2N2222A (C-B-E) en TO-92 lo tienen invertido. El 1N5822 tiene patas de 1.3 mm que no entran bien en la protoboard: se le sueldan cables delgados o se usa un 1N5819.
 
@@ -111,7 +111,7 @@ El LED y el heartbeat los ejecuta el temporizador de salidas. Cualquier cambio d
 
 **Temporizador de salidas.** El mismo patrón que A: el loop decide y el temporizador de 50 ms ejecuta. Aplica la velocidad del extractor con el impulso de arranque contado en ticks (10 ticks de 50 ms) y envía el heartbeat a A con la humedad, su alarma, el estado del sensor y el porcentaje del extractor. Solo escribe el PWM cuando cambia el valor.
 
-**DHT22 del Nodo B.** Real y no simulado aunque el enunciado lo permitiría. Echarle el aliento y ver cómo se enciende el extractor en B y parpadea el LED en A es la mejor prueba visible de la interacción entre nodos. La humedad simulada queda solo como respaldo si falla algo el último día. Va en GPIO 4 como en A: requiere resolver el acceso a la fila de 3V3 con dos protoboards juntas.
+**DHT22 del Nodo B.** Real y no simulado aunque el enunciado lo permitiría. Echarle el aliento y ver cómo se enciende el extractor en B y parpadea el LED en A es la mejor prueba visible de la interacción entre nodos. La humedad simulada queda solo como respaldo si falla algo el último día. Va en GPIO 4 como en A. Se conecta con jumpers hembra-macho porque la fila de 3V3 queda colgando fuera de la protoboard (ver Estado del trabajo).
 
 ## Limitaciones conocidas (declararlas en la presentación)
 
@@ -211,7 +211,19 @@ Desconexión de B: al desconectar su USB A pasó a enlaceB falso unos 3.5 s desp
 
 Con esto quedan probados en hardware los dos sentidos del enlace ESP-NOW, la detección de pérdida en ambos nodos, todos los comandos de los dos nodos, los comandos simultáneos y el comportamiento seguro. Falta solo el DHT22 del Nodo B.
 
-Pendiente: fijar el canal de 2.4 GHz en 6 en el router (quedó en Auto). Reservar la IP de la laptop en el router. Resolver el acceso a la fila de 3V3 del ESP32 del Nodo B para conectar su DHT22. Revisar los contactos del ventilador en la protoboard. Documento formal del protocolo. Plataforma Node-RED. Opcionales y preparación de la presentación.
+**Montaje del Nodo B con el ESP32 al borde.** Las filas de pines de esta placa están a 1 pulgada. En una protoboard estándar eso deja un agujero libre de un solo lado y la placa no alcanza a cubrir dos protoboards juntas. Solución: la fila de VIN va insertada en la fila j con el cuerpo de la placa hacia afuera y la fila de 3V3 queda colgando fuera del borde. Cada pin de la fila de VIN tiene libres los agujeros f a i. Tres jumpers hembra-macho conectan 3V3 al riel inferior (3.3 V), GND al riel GND inferior y D4 a la columna DATA del DHT22. Los rieles superiores llevan 5 V para el extractor y nunca se unen con los de 3.3 V. Se apoya el lado colgante para que la placa quede horizontal y se revisa que ningún pin colgante toque un riel. Pull-up de 10 kohm entre la columna DATA y el riel de 3.3 V.
+
+**Sistema completo (madrugada del 3 de octubre).** Con los dos DHT22 conectados el sistema quedó por primera vez en estado normal: humedad de B en 61 % (lecturas de 6 ms), extractor apagado con motivo normal, LED de A apagado y ninguna falla.
+
+Prueba del aliento sobre el sensor de B (interacción de B hacia A sin plataforma): la humedad pasó de 61.7 a 95.9 % en una sola lectura. En ese mismo estado B mostró alarmaHum verdadero, extractor al 100 % y motivo humedad. A publicó fuera de su ciclo de 5 s un estado con alarmaHumB verdadero y el LED en parpadeo rápido. El aviso llegó por el heartbeat inmediato de ESP-NOW.
+
+Histéresis: la humedad llegó a 100 % y bajó a 81.6, 73.1 y 67.1 %. A 67.1 % la alarma siguió activa aunque está por debajo del umbral de 70 % porque no había bajado de 70 - 5 = 65 %. A 64.4 % la alarma se apagó: extractor a 0 % con motivo normal en B y LED de A apagado otra vez. La alarma duró unos 55 s desde la primera lectura alta.
+
+Nota: el DHT22 marcó 100 % durante unos 35 s por la condensación del aliento en la rejilla. Conviene no exagerar en la demo porque una exposición prolongada a humedad saturada puede desplazar temporalmente la lectura del sensor.
+
+Con esto todas las restricciones del enunciado quedan demostradas en hardware real.
+
+Pendiente: fijar el canal de 2.4 GHz en 6 en el router (quedó en Auto). Cambiar la contraseña de administración del router si es la de fábrica. Reservar la IP de la laptop en el router. Anotar la corriente de la etiqueta del ventilador. Revisar los contactos del ventilador en la protoboard. Documento formal del protocolo. Plataforma Node-RED. Opcionales y preparación de la presentación.
 
 ## Cronograma
 
