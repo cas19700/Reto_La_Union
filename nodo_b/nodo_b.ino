@@ -28,6 +28,7 @@
 #include <esp_now.h>
 #include <esp_wifi.h>
 #include <esp_timer.h>
+#include <esp_system.h>
 #include <esp_arduino_version.h>
 #include <PubSubClient.h>
 #include <DHT.h>
@@ -175,6 +176,29 @@ uint32_t dutyDePorcentaje(uint8_t pct) {
 }
 
 // =====================================================================
+// MOTIVO DEL ULTIMO REINICIO
+// El ESP32 guarda en un registro por que se reinicio. Se imprime al
+// arrancar y se publica en el estado para diagnosticar desde la plataforma.
+// Nota: en el ESP32 original el boton EN cuenta como "encendido".
+// =====================================================================
+const char* motivoReinicio = "desconocido";
+
+const char* textoReinicio(esp_reset_reason_t r) {
+  switch (r) {
+    case ESP_RST_POWERON:   return "encendido";      // USB conectado o boton EN
+    case ESP_RST_SW:        return "software";
+    case ESP_RST_PANIC:     return "falla";          // excepcion del programa
+    case ESP_RST_INT_WDT:   return "watchdog_int";   // interrupcion trabada
+    case ESP_RST_TASK_WDT:  return "watchdog";       // loop trabado (enableLoopWDT)
+    case ESP_RST_WDT:       return "watchdog_otro";
+    case ESP_RST_BROWNOUT:  return "brownout";       // caida de voltaje
+    case ESP_RST_EXT:       return "externo";
+    case ESP_RST_DEEPSLEEP: return "deepsleep";
+    default:                return "desconocido";
+  }
+}
+
+// =====================================================================
 // PERSISTENCIA DE VARIABLES
 // =====================================================================
 void cargarConfig() {
@@ -265,6 +289,7 @@ void publicarEstado() {
   doc["alarmaTempA"]   = alarmaTempA;
   doc["perdidosA"]     = perdidosA;
   doc["rssi"]          = WiFi.RSSI();
+  doc["reinicio"]      = motivoReinicio;
   doc["uptimeS"]       = millis() / 1000;
 
   char buffer[448];
@@ -602,6 +627,8 @@ void gestionarModoSeguro(uint32_t ahora) {
 // =====================================================================
 void setup() {
   Serial.begin(115200);
+  motivoReinicio = textoReinicio(esp_reset_reason());
+  Serial.printf("Motivo del ultimo reinicio: %s\n", motivoReinicio);
   pinMode(PIN_EXTRACTOR, OUTPUT);
   digitalWrite(PIN_EXTRACTOR, LOW);   // apagado mientras se configura
   if (!pwmIniciar()) Serial.println("Error configurando el PWM del extractor");
