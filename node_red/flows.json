@@ -1,0 +1,1436 @@
+[
+    {
+        "id": "64933e048f20f263",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "flujo_bodega",
+        "type": "tab",
+        "label": "Bodega de azúcar",
+        "disabled": false,
+        "info": "Plataforma de usuario del reto IoT: estado de los nodos A y B, comandos con id único y seguimiento de confirmaciones."
+    },
+    {
+        "id": "broker",
+        "type": "mqtt-broker",
+        "name": "MosquittoLocal",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ui_base",
+        "type": "ui-base",
+        "name": "Bodega de azúcar",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "ui_tema",
+        "type": "ui-theme",
+        "name": "Tema bodega",
+        "colors": {
+            "surface": "#2C2C2A",
+            "primary": "#185FA5",
+            "bgPage": "#F1EFE8",
+            "groupBg": "#FFFFFF",
+            "groupOutline": "#D3D1C7"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "6px",
+            "widgetGap": "10px"
+        }
+    },
+    {
+        "id": "ui_pagina",
+        "type": "ui-page",
+        "name": "Bodega",
+        "ui": "ui_base",
+        "path": "/bodega",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "ui_tema",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "g_sistema",
+        "type": "ui-group",
+        "name": "Sistema",
+        "page": "ui_pagina",
+        "width": 12,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_nodoA",
+        "type": "ui-group",
+        "name": "Nodo A · Panel de supervisión",
+        "page": "ui_pagina",
+        "width": 6,
+        "height": 1,
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_nodoB",
+        "type": "ui-group",
+        "name": "Nodo B · Zona de bodega",
+        "page": "ui_pagina",
+        "width": 6,
+        "height": 1,
+        "order": 3,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_cmdA",
+        "type": "ui-group",
+        "name": "Comandos al Nodo A",
+        "page": "ui_pagina",
+        "width": 4,
+        "height": 1,
+        "order": 4,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_cmdB",
+        "type": "ui-group",
+        "name": "Comandos al Nodo B",
+        "page": "ui_pagina",
+        "width": 4,
+        "height": 1,
+        "order": 5,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_cmdTodos",
+        "type": "ui-group",
+        "name": "Comandos a ambos nodos",
+        "page": "ui_pagina",
+        "width": 4,
+        "height": 1,
+        "order": 6,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "g_historial",
+        "type": "ui-group",
+        "name": "Historial de comandos",
+        "page": "ui_pagina",
+        "width": 12,
+        "height": 1,
+        "order": 7,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "c1",
+        "type": "comment",
+        "z": "flujo_bodega",
+        "name": "1. Datos que llegan de los nodos",
+        "info": "Tres suscripciones: estado (JSON), conexion (texto online/offline del Last Will) y ack (JSON). Cada una guarda lo recibido en el contexto del flujo y avisa a \"Construir vista\".",
+        "x": 160,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "in_estado",
+        "type": "mqtt in",
+        "z": "flujo_bodega",
+        "name": "Estados (+/estado)",
+        "topic": "+/estado",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "broker",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "f_estado"
+            ]
+        ]
+    },
+    {
+        "id": "in_conexion",
+        "type": "mqtt in",
+        "z": "flujo_bodega",
+        "name": "Conexión (+/conexion)",
+        "topic": "+/conexion",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "broker",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 160,
+        "wires": [
+            [
+                "f_conexion"
+            ]
+        ]
+    },
+    {
+        "id": "in_ack",
+        "type": "mqtt in",
+        "z": "flujo_bodega",
+        "name": "Confirmaciones (+/ack)",
+        "topic": "+/ack",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "broker",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "f_ack"
+            ]
+        ]
+    },
+    {
+        "id": "st_broker",
+        "type": "status",
+        "z": "flujo_bodega",
+        "name": "Estado del broker",
+        "scope": [
+            "in_estado"
+        ],
+        "x": 150,
+        "y": 280,
+        "wires": [
+            [
+                "f_broker"
+            ]
+        ]
+    },
+    {
+        "id": "f_estado",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Guardar estado",
+        "func": "// msg.topic = \"nodoA/estado\" o \"nodoB/estado\"\n// Se guarda el ultimo estado de cada nodo con la hora de llegada\nconst nodo = msg.payload && msg.payload.nodo;\nif (nodo !== 'A' && nodo !== 'B') return null;\nconst estados = flow.get('estados') || {};\nestados[nodo] = { datos: msg.payload, t: Date.now() };\nflow.set('estados', estados);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 100,
+        "wires": [
+            [
+                "f_vista"
+            ]
+        ]
+    },
+    {
+        "id": "f_conexion",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Guardar conexión",
+        "func": "// msg.topic = \"nodoA/conexion\"; payload = \"online\" u \"offline\"\n// \"offline\" lo publica el broker (Last Will) cuando un nodo desaparece\nconst nodo = msg.topic.startsWith('nodoA') ? 'A' : (msg.topic.startsWith('nodoB') ? 'B' : null);\nif (!nodo) return null;\nconst conexion = flow.get('conexion') || {};\nconexion[nodo] = { valor: String(msg.payload).trim(), t: Date.now() };\nflow.set('conexion', conexion);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 160,
+        "wires": [
+            [
+                "f_vista"
+            ]
+        ]
+    },
+    {
+        "id": "f_ack",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Registrar confirmación",
+        "func": "// Busca el comando por su id y anota la respuesta del nodo que confirma\nconst a = msg.payload || {};\nif (!a.id || (a.nodo !== 'A' && a.nodo !== 'B')) return null;\nconst historial = flow.get('historial') || [];\nconst cmd = historial.find(c => c.id === a.id);\nif (!cmd) return null;   // ack de un comando que no envio esta plataforma\ncmd.resp[a.nodo] = { ok: a.ok === true, error: a.error || '', t: Date.now() };\nflow.set('historial', historial);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 220,
+        "wires": [
+            [
+                "f_vista"
+            ]
+        ]
+    },
+    {
+        "id": "f_broker",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Guardar estado del broker",
+        "func": "// El nodo status reporta el estado de la conexion del nodo MQTT.\n// Verde = conectado. Se usa el color y no el texto porque el texto\n// es una clave de traduccion (\"node-red:common.status.connected\").\nconst conectado = msg.status && msg.status.fill === 'green';\nflow.set('broker', { conectado: conectado, t: Date.now() });\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 280,
+        "wires": [
+            [
+                "f_vista"
+            ]
+        ]
+    },
+    {
+        "id": "tick",
+        "type": "inject",
+        "z": "flujo_bodega",
+        "name": "Cada 1 s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 340,
+        "wires": [
+            [
+                "f_vista"
+            ]
+        ]
+    },
+    {
+        "id": "c2",
+        "type": "comment",
+        "z": "flujo_bodega",
+        "name": "2. Construir la vista del dashboard",
+        "info": "Una sola funcion arma lo que muestran todas las tarjetas. Se ejecuta cada segundo y cada vez que llega un dato, asi la edad de los datos y los comandos sin respuesta se actualizan solos.",
+        "x": 720,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "f_vista",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Construir vista",
+        "func": "// Arma el contenido de todas las tarjetas a partir del contexto del flujo.\n// Salidas: 1 Nodo A | 2 Nodo B | 3 Sistema | 4 Historial | 5 Temp A | 6 Hum B | 7 Extractor B\nconst ahora = Date.now();\nconst estados   = flow.get('estados')   || {};\nconst conexion  = flow.get('conexion')  || {};\nconst broker    = flow.get('broker')    || { conectado: false };\nconst historial = flow.get('historial') || [];\nconst TIMEOUT_ACK_MS = 5000;\n\nfunction hace(t) {\n  const s = Math.round((ahora - t) / 1000);\n  if (s < 60) return s + ' s';\n  return Math.floor(s / 60) + ' min ' + (s % 60) + ' s';\n}\nfunction uptime(s) {\n  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);\n  return (h ? h + ' h ' : '') + m + ' min';\n}\n\n// Estado de conexion de un nodo, de mas grave a menos grave\nfunction estadoConexion(nodo) {\n  const e = estados[nodo];\n  const c = conexion[nodo];\n  if (!broker.conectado) return { texto: 'Sin conexión con el broker', clase: 'mal', vigente: false };\n  if (c && c.valor === 'offline' && (!e || c.t >= e.t))\n    return { texto: 'Desconectado (Last Will)', clase: 'mal', vigente: false };\n  if (!e) return { texto: 'Sin datos', clase: 'gris', vigente: false };\n  // Se espera un estado por intervalo: 3 intervalos sin datos = datos viejos\n  const limite = Math.max(15000, 3 * (e.datos.intervaloMs || 5000));\n  if (ahora - e.t > limite)\n    return { texto: 'Sin datos recientes · último hace ' + hace(e.t), clase: 'alerta', vigente: false };\n  return { texto: 'En línea · actualizado hace ' + hace(e.t), clase: 'bien', vigente: true };\n}\n\nfunction fila(etiqueta, valor, clase) { return { etiqueta, valor, clase: clase || '' }; }\n\nconst TEXTO_LED = { off: 'Apagado (normal)', lento: 'Parpadeo lento (falla)', rapido: 'Parpadeo rápido (alarma)', on: 'Encendido fijo (manual)' };\nconst TEXTO_REINICIO = { encendido: 'Encendido o botón EN', software: 'Reinicio por software', falla: 'Falla del programa', watchdog: 'Watchdog: loop trabado', watchdog_int: 'Watchdog de interrupción', watchdog_otro: 'Watchdog', brownout: 'Caída de voltaje', externo: 'Reset externo' };\nfunction filaReinicio(r) {\n  if (!r) return fila('Último reinicio', 'Sin dato (firmware anterior)', 'gris');\n  return fila('Último reinicio', TEXTO_REINICIO[r] || r, r === 'encendido' ? '' : 'mal');\n}\nconst TEXTO_MOTIVO = { humedad: 'humedad alta en B', temperaturaA: 'temperatura alta en A', preventivo: 'preventivo: falta información confiable', normal: 'todo normal', manual: 'control manual' };\n\nfunction vistaA() {\n  const con = estadoConexion('A');\n  const e = estados.A;\n  if (!e) return { titulo: 'Nodo A', conexion: con.texto, claseConexion: con.clase, filas: [] };\n  const d = e.datos;\n  const f = [];\n  f.push(d.sensorOk ? fila('Temperatura', d.temp + ' °C') : fila('Temperatura', 'Sensor en falla', 'mal'));\n  f.push(d.alarmaTemp ? fila('Alarma de temperatura', 'ACTIVA', 'mal') : fila('Alarma de temperatura', 'Normal', 'bien'));\n  f.push(fila('LED', TEXTO_LED[d.led] || d.led, d.led === 'rapido' ? 'mal' : (d.led === 'lento' ? 'alerta' : '')));\n  f.push(fila('Modo', d.modo === 'auto' ? 'Automático' : 'Manual', d.modo === 'manual' ? 'alerta' : ''));\n  f.push(fila('Umbral', 'Activa en ' + d.umbralTemp + ' °C · se apaga en ' + (d.umbralTemp - d.histeresis) + ' °C'));\n  f.push(fila('Muestreo', 'Cada ' + (d.intervaloMs / 1000) + ' s'));\n  f.push(d.enlaceB ? fila('Enlace ESP-NOW con B', 'Activo', 'bien') : fila('Enlace ESP-NOW con B', 'Caído', 'mal'));\n  f.push(fila('Alarma de humedad recibida de B', d.alarmaHumB ? 'Sí' : 'No', d.alarmaHumB ? 'mal' : ''));\n  f.push(fila('Mensajes perdidos de B', String(d.perdidosB)));\n  f.push(fila('Señal WiFi', d.rssi + ' dBm'));\n  f.push(fila('Encendido hace', uptime(d.uptimeS)));\n  f.push(filaReinicio(d.reinicio));\n  if (!con.vigente) f.forEach(x => x.clase = 'gris');\n  return { titulo: 'Nodo A', conexion: con.texto, claseConexion: con.clase, filas: f };\n}\n\nfunction vistaB() {\n  const con = estadoConexion('B');\n  const e = estados.B;\n  if (!e) return { titulo: 'Nodo B', conexion: con.texto, claseConexion: con.clase, filas: [] };\n  const d = e.datos;\n  const f = [];\n  f.push(d.sensorOk ? fila('Humedad relativa', d.hum + ' %') : fila('Humedad relativa', 'Sensor en falla', 'mal'));\n  f.push(d.alarmaHum ? fila('Alarma de humedad', 'ACTIVA', 'mal') : fila('Alarma de humedad', 'Normal', 'bien'));\n  f.push(fila('Extractor', d.extractor + ' % · ' + (TEXTO_MOTIVO[d.motivo] || d.motivo), d.motivo === 'humedad' || d.motivo === 'temperaturaA' ? 'mal' : (d.motivo === 'preventivo' ? 'alerta' : '')));\n  f.push(fila('Modo', d.modo === 'auto' ? 'Automático' : 'Manual', d.modo === 'manual' ? 'alerta' : ''));\n  f.push(fila('Umbral', 'Activa en ' + d.umbralHum + ' % · se apaga en ' + (d.umbralHum - d.histeresisHum) + ' %'));\n  f.push(fila('Muestreo', 'Cada ' + (d.intervaloMs / 1000) + ' s'));\n  f.push(d.enlaceA ? fila('Enlace ESP-NOW con A', 'Activo', 'bien') : fila('Enlace ESP-NOW con A', 'Caído', 'mal'));\n  f.push(fila('Alarma de temperatura recibida de A', d.alarmaTempA ? 'Sí' : 'No', d.alarmaTempA ? 'mal' : ''));\n  f.push(fila('Mensajes perdidos de A', String(d.perdidosA)));\n  f.push(fila('Señal WiFi', d.rssi + ' dBm'));\n  f.push(fila('Encendido hace', uptime(d.uptimeS)));\n  f.push(filaReinicio(d.reinicio));\n  if (!con.vigente) f.forEach(x => x.clase = 'gris');\n  return { titulo: 'Nodo B', conexion: con.texto, claseConexion: con.clase, filas: f };\n}\n\nfunction vistaSistema() {\n  const ca = estadoConexion('A'), cb = estadoConexion('B');\n  return {\n    titulo: 'Sistema',\n    conexion: broker.conectado ? 'Broker MQTT conectado' : 'Broker MQTT desconectado',\n    claseConexion: broker.conectado ? 'bien' : 'mal',\n    filas: [\n      fila('Nodo A', ca.texto, ca.clase),\n      fila('Nodo B', cb.texto, cb.clase)\n    ]\n  };\n}\n\n// Estado de cada comando: confirmado, rechazado, pendiente o sin respuesta\nfunction vistaHistorial() {\n  return historial.map(c => {\n    const partes = c.esperados.map(n => {\n      const r = c.resp[n];\n      if (r) return r.ok ? { texto: n + ': confirmado', clase: 'bien' }\n                         : { texto: n + ': rechazado · ' + r.error, clase: 'mal' };\n      if (ahora - c.t > TIMEOUT_ACK_MS) return { texto: n + ': sin respuesta', clase: 'alerta' };\n      return { texto: n + ': pendiente', clase: 'gris' };\n    });\n    const hora = new Date(c.t).toLocaleTimeString('es-GT', { hour12: false });\n    return { id: c.id, hora, destino: c.destino, texto: c.texto, partes };\n  });\n}\n\n// Medidores: solo con datos vigentes y sensor funcionando\nconst salidaTemp = (estadoConexion('A').vigente && estados.A.datos.sensorOk) ? { payload: estados.A.datos.temp } : null;\nconst salidaHum  = (estadoConexion('B').vigente && estados.B.datos.sensorOk) ? { payload: estados.B.datos.hum } : null;\nconst salidaExt  = estadoConexion('B').vigente ? { payload: estados.B.datos.extractor } : null;\n\nreturn [\n  { payload: vistaA() },\n  { payload: vistaB() },\n  { payload: vistaSistema() },\n  { payload: vistaHistorial() },\n  salidaTemp, salidaHum, salidaExt\n];",
+        "outputs": 7,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 200,
+        "wires": [
+            [
+                "t_nodoA"
+            ],
+            [
+                "t_nodoB"
+            ],
+            [
+                "t_sistema"
+            ],
+            [
+                "t_historial"
+            ],
+            [
+                "g_temp"
+            ],
+            [
+                "g_hum"
+            ],
+            [
+                "g_ext"
+            ]
+        ]
+    },
+    {
+        "id": "t_nodoA",
+        "type": "ui-template",
+        "z": "flujo_bodega",
+        "group": "g_nodoA",
+        "page": "",
+        "ui": "",
+        "name": "Tarjeta Nodo A",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n  <div v-if=\"msg && msg.payload\" class=\"tarjeta\">\n    <div :class=\"['estado', msg.payload.claseConexion]\">{{ msg.payload.conexion }}</div>\n    <table class=\"filas\">\n      <tr v-for=\"f in msg.payload.filas\" :key=\"f.etiqueta\">\n        <td class=\"etiqueta\">{{ f.etiqueta }}</td>\n        <td :class=\"['valor', f.clase]\">{{ f.valor }}</td>\n      </tr>\n    </table>\n  </div>\n  <div v-else class=\"estado gris\">Esperando datos...</div>\n</template>\n\n<style scoped>\n.tarjeta { width: 100%; }\n.estado { padding: 6px 10px; border-radius: 4px; font-weight: 500; margin-bottom: 8px; }\n.estado.bien   { background: #E1F5EE; color: #085041; }\n.estado.alerta { background: #FAEEDA; color: #633806; }\n.estado.mal    { background: #FCEBEB; color: #791F1F; }\n.estado.gris   { background: #F1EFE8; color: #444441; }\n.filas { width: 100%; border-collapse: collapse; }\n.filas td { padding: 4px 6px; border-bottom: 1px solid #F1EFE8; font-size: 14px; }\n.etiqueta { color: #5F5E5A; width: 45%; }\n.valor { font-weight: 500; }\n.valor.bien   { color: #0F6E56; }\n.valor.alerta { color: #854F0B; }\n.valor.mal    { color: #A32D2D; }\n.valor.gris   { color: #888780; }\n</style>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1020,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "t_nodoB",
+        "type": "ui-template",
+        "z": "flujo_bodega",
+        "group": "g_nodoB",
+        "page": "",
+        "ui": "",
+        "name": "Tarjeta Nodo B",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n  <div v-if=\"msg && msg.payload\" class=\"tarjeta\">\n    <div :class=\"['estado', msg.payload.claseConexion]\">{{ msg.payload.conexion }}</div>\n    <table class=\"filas\">\n      <tr v-for=\"f in msg.payload.filas\" :key=\"f.etiqueta\">\n        <td class=\"etiqueta\">{{ f.etiqueta }}</td>\n        <td :class=\"['valor', f.clase]\">{{ f.valor }}</td>\n      </tr>\n    </table>\n  </div>\n  <div v-else class=\"estado gris\">Esperando datos...</div>\n</template>\n\n<style scoped>\n.tarjeta { width: 100%; }\n.estado { padding: 6px 10px; border-radius: 4px; font-weight: 500; margin-bottom: 8px; }\n.estado.bien   { background: #E1F5EE; color: #085041; }\n.estado.alerta { background: #FAEEDA; color: #633806; }\n.estado.mal    { background: #FCEBEB; color: #791F1F; }\n.estado.gris   { background: #F1EFE8; color: #444441; }\n.filas { width: 100%; border-collapse: collapse; }\n.filas td { padding: 4px 6px; border-bottom: 1px solid #F1EFE8; font-size: 14px; }\n.etiqueta { color: #5F5E5A; width: 45%; }\n.valor { font-weight: 500; }\n.valor.bien   { color: #0F6E56; }\n.valor.alerta { color: #854F0B; }\n.valor.mal    { color: #A32D2D; }\n.valor.gris   { color: #888780; }\n</style>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1020,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "t_sistema",
+        "type": "ui-template",
+        "z": "flujo_bodega",
+        "group": "g_sistema",
+        "page": "",
+        "ui": "",
+        "name": "Tarjeta Sistema",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n  <div v-if=\"msg && msg.payload\" class=\"tarjeta\">\n    <div :class=\"['estado', msg.payload.claseConexion]\">{{ msg.payload.conexion }}</div>\n    <table class=\"filas\">\n      <tr v-for=\"f in msg.payload.filas\" :key=\"f.etiqueta\">\n        <td class=\"etiqueta\">{{ f.etiqueta }}</td>\n        <td :class=\"['valor', f.clase]\">{{ f.valor }}</td>\n      </tr>\n    </table>\n  </div>\n  <div v-else class=\"estado gris\">Esperando datos...</div>\n</template>\n\n<style scoped>\n.tarjeta { width: 100%; }\n.estado { padding: 6px 10px; border-radius: 4px; font-weight: 500; margin-bottom: 8px; }\n.estado.bien   { background: #E1F5EE; color: #085041; }\n.estado.alerta { background: #FAEEDA; color: #633806; }\n.estado.mal    { background: #FCEBEB; color: #791F1F; }\n.estado.gris   { background: #F1EFE8; color: #444441; }\n.filas { width: 100%; border-collapse: collapse; }\n.filas td { padding: 4px 6px; border-bottom: 1px solid #F1EFE8; font-size: 14px; }\n.etiqueta { color: #5F5E5A; width: 45%; }\n.valor { font-weight: 500; }\n.valor.bien   { color: #0F6E56; }\n.valor.alerta { color: #854F0B; }\n.valor.mal    { color: #A32D2D; }\n.valor.gris   { color: #888780; }\n</style>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1030,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "t_historial",
+        "type": "ui-template",
+        "z": "flujo_bodega",
+        "group": "g_historial",
+        "page": "",
+        "ui": "",
+        "name": "Tabla de historial",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<template>\n  <div v-if=\"msg && msg.payload && msg.payload.length\">\n    <table class=\"historial\">\n      <tr><th>Hora</th><th>Destino</th><th>Comando</th><th>Respuesta</th></tr>\n      <tr v-for=\"c in msg.payload\" :key=\"c.id\">\n        <td>{{ c.hora }}</td>\n        <td>{{ c.destino }}</td>\n        <td>{{ c.texto }}<div class=\"id\">id {{ c.id }}</div></td>\n        <td><div v-for=\"p in c.partes\" :key=\"p.texto\" :class=\"p.clase\">{{ p.texto }}</div></td>\n      </tr>\n    </table>\n  </div>\n  <div v-else class=\"vacio\">Todavía no se han enviado comandos desde esta plataforma.</div>\n</template>\n\n<style scoped>\n.historial { width: 100%; border-collapse: collapse; font-size: 14px; }\n.historial th { text-align: left; color: #5F5E5A; font-weight: 500; padding: 4px 6px; border-bottom: 1px solid #D3D1C7; }\n.historial td { padding: 4px 6px; border-bottom: 1px solid #F1EFE8; vertical-align: top; }\n.id { color: #888780; font-size: 12px; }\n.bien { color: #0F6E56; font-weight: 500; }\n.mal { color: #A32D2D; font-weight: 500; }\n.alerta { color: #854F0B; font-weight: 500; }\n.gris { color: #888780; }\n.vacio { color: #888780; }\n</style>",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1040,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "g_temp",
+        "type": "ui-gauge",
+        "z": "flujo_bodega",
+        "name": "Medidor temperatura A",
+        "group": "g_nodoA",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 6,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "rounded",
+        "title": "Temperatura",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "°C",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": 0,
+                "color": "#378ADD"
+            }
+        ],
+        "min": 0,
+        "max": 50,
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 1040,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "g_hum",
+        "type": "ui-gauge",
+        "z": "flujo_bodega",
+        "name": "Medidor humedad B",
+        "group": "g_nodoB",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 6,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "rounded",
+        "title": "Humedad",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "% HR",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": 0,
+                "color": "#378ADD"
+            }
+        ],
+        "min": 0,
+        "max": 100,
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 1030,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "g_ext",
+        "type": "ui-gauge",
+        "z": "flujo_bodega",
+        "name": "Medidor extractor B",
+        "group": "g_nodoB",
+        "order": 3,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 6,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "rounded",
+        "title": "Extractor",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "%",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": 0,
+                "color": "#1D9E75"
+            }
+        ],
+        "min": 0,
+        "max": 100,
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 1030,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c3",
+        "type": "comment",
+        "z": "flujo_bodega",
+        "name": "3. Comandos desde el dashboard",
+        "info": "Cada boton entrega un objeto con destino, accion y valor. \"Crear comando\" le pone un id unico, lo registra en el historial y lo publica en el topico del nodo con QoS 1.",
+        "x": 170,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "bA_on",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdA",
+        "name": "",
+        "label": "LED encendido",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"A\", \"accion\": \"led\", \"valor\": \"on\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bA_off",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdA",
+        "name": "",
+        "label": "LED apagado",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"A\", \"accion\": \"led\", \"valor\": \"off\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 540,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bA_blink",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdA",
+        "name": "",
+        "label": "LED parpadeo",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"A\", \"accion\": \"led\", \"valor\": \"blink\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 580,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bA_auto",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdA",
+        "name": "",
+        "label": "Modo automático",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"A\", \"accion\": \"modo\", \"valor\": \"auto\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 620,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bA_rep",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdA",
+        "name": "",
+        "label": "Pedir reporte",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"A\", \"accion\": \"reporte\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 660,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bB_0",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdB",
+        "name": "",
+        "label": "Extractor 0 %",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"B\", \"accion\": \"extractor\", \"valor\": 0}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 700,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bB_40",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdB",
+        "name": "",
+        "label": "Extractor 40 %",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"B\", \"accion\": \"extractor\", \"valor\": 40}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 740,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bB_70",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdB",
+        "name": "",
+        "label": "Extractor 70 %",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"B\", \"accion\": \"extractor\", \"valor\": 70}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 780,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bB_100",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdB",
+        "name": "",
+        "label": "Extractor 100 %",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"B\", \"accion\": \"extractor\", \"valor\": 100}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 820,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bB_auto",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdB",
+        "name": "",
+        "label": "Modo automático",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"B\", \"accion\": \"modo\", \"valor\": \"auto\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 860,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bB_rep",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdB",
+        "name": "",
+        "label": "Pedir reporte",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"B\", \"accion\": \"reporte\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 900,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bT_auto",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdTodos",
+        "name": "",
+        "label": "Ambos en automático",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"todos\", \"accion\": \"modo\", \"valor\": \"auto\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 940,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bT_man",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdTodos",
+        "name": "",
+        "label": "Ambos en manual",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"todos\", \"accion\": \"modo\", \"valor\": \"manual\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 980,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "bT_rep",
+        "type": "ui-button",
+        "z": "flujo_bodega",
+        "group": "g_cmdTodos",
+        "name": "",
+        "label": "Reporte de ambos",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "{\"destino\": \"todos\", \"accion\": \"reporte\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 170,
+        "y": 1020,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "fmA",
+        "type": "ui-form",
+        "z": "flujo_bodega",
+        "name": "",
+        "group": "g_cmdA",
+        "label": "Variables de operación",
+        "order": 10,
+        "width": "4",
+        "height": "8",
+        "options": [
+            {
+                "label": "Umbral de temperatura (°C, -40 a 80)",
+                "key": "umbralTemp",
+                "type": "number",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Histéresis (°C, 0 a 10)",
+                "key": "histeresis",
+                "type": "number",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Muestreo (ms, 2000 a 60000)",
+                "key": "intervaloMs",
+                "type": "number",
+                "required": false,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "umbralTemp": "",
+            "histeresis": "",
+            "intervaloMs": ""
+        },
+        "payload": "",
+        "submit": "Aplicar",
+        "cancel": "Limpiar",
+        "resetOnSubmit": true,
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "passthru": false,
+        "dropdownOptions": [],
+        "x": 170,
+        "y": 1080,
+        "wires": [
+            [
+                "f_setA"
+            ]
+        ]
+    },
+    {
+        "id": "fmB",
+        "type": "ui-form",
+        "z": "flujo_bodega",
+        "name": "",
+        "group": "g_cmdB",
+        "label": "Variables de operación",
+        "order": 10,
+        "width": "4",
+        "height": "8",
+        "options": [
+            {
+                "label": "Umbral de humedad (% HR, 20 a 95)",
+                "key": "umbralHum",
+                "type": "number",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Histéresis (puntos, 0 a 20)",
+                "key": "histeresisHum",
+                "type": "number",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Muestreo (ms, 2000 a 60000)",
+                "key": "intervaloMs",
+                "type": "number",
+                "required": false,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "umbralHum": "",
+            "histeresisHum": "",
+            "intervaloMs": ""
+        },
+        "payload": "",
+        "submit": "Aplicar",
+        "cancel": "Limpiar",
+        "resetOnSubmit": true,
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "passthru": false,
+        "dropdownOptions": [],
+        "x": 170,
+        "y": 1120,
+        "wires": [
+            [
+                "f_setB"
+            ]
+        ]
+    },
+    {
+        "id": "f_setA",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Formulario A a comando set",
+        "func": "// El formulario entrega todos sus campos. Solo se envian los que el\n// usuario lleno: un campo vacio no debe cambiar esa variable en el nodo.\n// La validacion de rangos la hace el nodo (es la fuente de verdad).\nconst NODO = 'A';\nconst cmd = { destino: NODO, accion: 'set' };\nlet hay = false;\nfor (const [k, v] of Object.entries(msg.payload || {})) {\n  if (v === '' || v === null || v === undefined) continue;\n  const n = Number(v);\n  if (Number.isNaN(n)) continue;\n  cmd[k] = n;\n  hay = true;\n}\nif (!hay) { node.warn('Formulario sin valores: no se envia nada'); return null; }\nmsg.payload = cmd;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 1080,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "f_setB",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Formulario B a comando set",
+        "func": "// El formulario entrega todos sus campos. Solo se envian los que el\n// usuario lleno: un campo vacio no debe cambiar esa variable en el nodo.\n// La validacion de rangos la hace el nodo (es la fuente de verdad).\nconst NODO = 'B';\nconst cmd = { destino: NODO, accion: 'set' };\nlet hay = false;\nfor (const [k, v] of Object.entries(msg.payload || {})) {\n  if (v === '' || v === null || v === undefined) continue;\n  const n = Number(v);\n  if (Number.isNaN(n)) continue;\n  cmd[k] = n;\n  hay = true;\n}\nif (!hay) { node.warn('Formulario sin valores: no se envia nada'); return null; }\nmsg.payload = cmd;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 1120,
+        "wires": [
+            [
+                "f_comando"
+            ]
+        ]
+    },
+    {
+        "id": "f_comando",
+        "type": "function",
+        "z": "flujo_bodega",
+        "name": "Crear comando",
+        "func": "// Recibe { destino: 'A' | 'B' | 'todos', accion, ...parametros }\n// 1. Genera un id unico (el nodo ignora un id repetido)\n// 2. Lo registra en el historial con los nodos que deben confirmar\n// 3. Lo publica en el topico del destino con QoS 1\nconst c = msg.payload || {};\nconst destinos = { A: 'nodoA/cmd', B: 'nodoB/cmd', todos: 'todos/cmd' };\nif (!destinos[c.destino] || !c.accion) { node.warn('Comando sin destino o accion'); return null; }\n\n// id = \"p\" + milisegundos en base 36 + contador: unico aunque se pulsen\n// dos botones en el mismo milisegundo, y de menos de 31 caracteres\nlet n = context.get('contador') || 0;\ncontext.set('contador', (n + 1) % 1000);\nconst id = 'p' + Date.now().toString(36) + n;\n\nconst cuerpo = { id: id, accion: c.accion };\nfor (const [k, v] of Object.entries(c)) if (k !== 'destino' && k !== 'accion') cuerpo[k] = v;\n\n// Texto legible para el historial: \"set umbralTemp=25\" o \"led on\"\nconst params = Object.entries(cuerpo).filter(([k]) => k !== 'id' && k !== 'accion')\n  .map(([k, v]) => k === 'valor' ? String(v) : k + '=' + v).join(' ');\nconst historial = flow.get('historial') || [];\nhistorial.unshift({\n  id: id,\n  destino: c.destino === 'todos' ? 'Ambos' : 'Nodo ' + c.destino,\n  texto: (c.accion + ' ' + params).trim(),\n  esperados: c.destino === 'todos' ? ['A', 'B'] : [c.destino],\n  resp: {},\n  t: Date.now()\n});\nflow.set('historial', historial.slice(0, 10));   // solo los ultimos 10\n\nreturn [{ topic: destinos[c.destino], payload: JSON.stringify(cuerpo), qos: 1, retain: false }, { payload: 'nuevo' }];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 640,
+        "wires": [
+            [
+                "out_cmd"
+            ],
+            [
+                "f_vista"
+            ]
+        ]
+    },
+    {
+        "id": "out_cmd",
+        "type": "mqtt out",
+        "z": "flujo_bodega",
+        "name": "Publicar comando",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "broker",
+        "x": 700,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "c3388fd14acf8ccb",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.32.0"
+        }
+    }
+]
